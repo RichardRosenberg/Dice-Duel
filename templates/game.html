@@ -1,0 +1,103 @@
+<!--Author: Richard Rosenberg
+    Date: Nov 16, 2023
+    Version: 1.0
+    Purpose: To play Dice Duel.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+    <meta name="description" content="To play the game Dice Duel in any browser.">
+    <meta name="keywords" content="dice duel, pvp, multiplayer, fun, easy to learn, game, project,school">
+    <title>Dice Duel</title>
+</head>
+<body>
+    <!--welcome message with player names-->
+    <h1>{{ welcome_message }}</h1>
+    <!--container to hold player names, avatars, and scores-->
+    <div class="container">
+        <div class="player-container">
+            <h2>{{ player1.username }}</h2>
+            <img src="{{ url_for('static', filename='images/avatar' ~ player1.avatar ~ '.png') }}" alt="Avatar 1"
+                class="avatar-img">
+            <p class="score">Score: {{ player1['score'] }}</p>
+        </div>
+        <div class="player-container">
+            <h2>{{ player2.username }}</h2>
+            <img src="{{ url_for('static', filename='images/avatar' ~ player2.avatar ~ '.png') }}" alt="Avatar 2"
+                class="avatar-img">
+            <p class="score">Score: {{ player2['score'] }}</p>
+        </div>
+    </div>
+    <div class="roll-box">
+        <!--display roll message-->
+        <div class="roll-message">
+            <p>{{ session.get('roll_message', 'Please Roll or Pass to start.') }}</p>
+        </div>
+        <!--display who's turn it is-->
+        <div class="turn-message">
+            {% if player1_turn %}
+            {{ player1.username }}'s turn
+            {% else %}
+            {{ player2.username }}'s turn
+            {% endif %}
+        </div>
+        <div class="dice-container" id="playerDice">
+            {% if player1_turn %}
+            {% if session.get('player1_roll') %}
+            <img src="{{ url_for('static', filename='images/black' ~ session['player1_roll'] ~ '.png') }}"
+                alt="Dice Roll" class="dice-img">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/empty_dice.png') }}" alt="Dice Roll" class="dice-img">
+            {% endif %}
+            {% else %}
+            {% if session.get('player2_roll') %}
+            <img src="{{ url_for('static', filename='images/red' ~ session['player2_roll'] ~ '.png') }}" alt="Dice Roll"
+                class="dice-img">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/empty_dice.png') }}" alt="Dice Roll" class="dice-img">
+            {% endif %}
+            {% endif %}
+        </div>
+        <!--buttons-->
+        {% if player1['score'] < 20 and player2['score'] < 20 %} <button class="btn btn-primary larger-btn"
+            onclick="rollDice()">Roll</button>
+            <form action="{{ url_for('pass_turn') }}" method="get">
+                <button type="submit" class="btn larger-btn">Pass</button>
+            </form>
+            {% else %}
+            <form action="{{ url_for('new_game') }}" method="get">
+                <button type="submit" class="btn larger-btn">New Game</button>
+            </form>
+            <form action="{{ url_for('index') }}" method="get">
+                <button type="submit" class="btn larger-btn">Main Menu</button>
+            </form>
+            {% endif %}
+    </div>
+    <!--game rules-->
+    <div class="game-rules">
+        <h3>GAME RULES:</h3>
+        <p>1. Player 1 starts the game and can either Roll or Pass.</p>
+        <p>2. Players can roll until they win or roll a 1.</p>
+        <p>3. When 1 is rolled your score will reset to 0 and the turn will pass.</p>
+        <p>4. When a player reaches 20, they win!</p>
+    </div>
+    <!--ajax request-->
+    <script>
+        function rollDice() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/roll_dice', true);
+            xhr.send();
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    location.reload();
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>

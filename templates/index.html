@@ -1,0 +1,48 @@
+<!--Author: Richard Rosenberg
+    Date: Nov 15, 2023
+    Version: 1.0
+    Purpose: To get username and avatar selection from both players.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/style.css') }}">
+    <meta name="description" content="To get username and avatar selection from both players for the game Dice Duel.">
+    <meta name="keywords" content="dice duel, pvp, multiplayer, fun, easy to learn, game, project,school">
+    <title>Dice Duel</title>
+</head>
+<body>
+    <h1>Welcome to Dice Duel</h1>
+    <!--create a url with flask-->
+    <form action="{{ url_for('index') }}" method="post">
+        <div class="player-box">
+            <label for="player1">Enter player one username:</label>
+            <input type="text" id="player1" name="player1" required>
+            <p>Please pick one of the profile pictures:</p>
+            {% for i in range(1, 11) %}
+            <label>
+                <input type="radio" name="avatar1" value="{{ i }}">
+                <img src="{{ url_for('static', filename='images/avatar' ~ i ~ '.png') }}" alt="Avatar {{ i }}">
+            </label>
+            {% endfor %}
+        </div>
+        <br><br>
+        <div class="player-box">
+            <label for="player2">Enter player two username:</label>
+            <input type="text" id="player2" name="player2" required>
+            <p>Please pick one of the profile pictures:</p>
+            {% for i in range(1, 11) %}
+            <label>
+                <input type="radio" name="avatar2" value="{{ i }}">
+                <img src="{{ url_for('static', filename='images/avatar' ~ i ~ '.png') }}" alt="Avatar {{ i }}">
+            </label>
+            {% endfor %}
+        </div>
+        <br><br>
+        <button type="submit" class="play-button">Let's Play!</button>
+    </form>
+</body>
+</html>
